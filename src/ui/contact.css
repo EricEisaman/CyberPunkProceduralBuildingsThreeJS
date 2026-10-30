@@ -1,0 +1,776 @@
+/* ---- the author card, bottom right (src/ui/ContactCard.tsx) ----
+   the district's chrome: dark glass, cut corners, Orbitron capitals, neon.
+   `--contact-accent` / `--contact-accent-2` are the first two colours of the
+   neon palette on the stage (App.tsx); the source link is hazard yellow
+   whatever the palette.
+
+   The cut corners are clip-paths, which also clip borders and shadows, so the
+   card is two layers: `.contact` is the neon edge, `.contact__body` the glass
+   inset 1px inside it, cut the same way. */
+
+@property --contact-spin {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.contact-wrap {
+  --contact-accent: #ff2a6d;
+  --contact-accent-2: #05d9e8;
+  --contact-ink: #e8e6f0;
+  --contact-dim: #8a87a0;
+  --contact-line: rgba(255, 255, 255, 0.1);
+  --contact-glass: rgba(9, 7, 18, 0.9); /* opaque enough for a neon sign behind it */
+  --contact-well: #120f20;
+  --contact-mono: ui-monospace, "SF Mono", Consolas, monospace;
+  --contact-yellow: #fcee0a;
+  --contact-yellow-deep: #c9b800;
+  --contact-black: #0a0814;
+  --contact-online: #2dff8a;
+  /* the cut: top-right and bottom-left corners */
+  --contact-cut: 14px;
+  --contact-shape: polygon(0 0, calc(100% - var(--contact-cut)) 0, 100% var(--contact-cut), 100% 100%,
+    var(--contact-cut) 100%, 0 calc(100% - var(--contact-cut)));
+
+  position: fixed;
+  right: 16px; /* the panel's edge, so the two read as one column */
+  bottom: 16px;
+  z-index: 15; /* under the text editor and the preloader */
+  width: 300px; /* the panel's width */
+  max-width: calc(100vw - 32px);
+  color: var(--contact-ink);
+  font-family: Rajdhani, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  /* boots in on mount: the card only mounts once the city is ready */
+  animation: contact-in 0.7s cubic-bezier(0.2, 0.85, 0.25, 1) 0.1s both;
+}
+
+/* the panel stops short of the card (see ContactCard.tsx); on phones the panel
+   is a bottom sheet and the card moves to the top */
+@media (min-width: 761px) {
+  .panel {
+    bottom: calc(var(--contact-clear, 16px));
+  }
+}
+
+/* boots in like a HUD element: a flicker, then on */
+@keyframes contact-in {
+  0% { opacity: 0; transform: translateY(12px); }
+  40% { opacity: 0.8; }
+  48% { opacity: 0.2; }
+  56% { opacity: 1; }
+  64% { opacity: 0.5; }
+  100% { opacity: 1; transform: none; }
+}
+
+/* ---- the tile ---- */
+
+.contact {
+  position: relative;
+  padding: 1px;
+  clip-path: var(--contact-shape);
+  background: linear-gradient(135deg, var(--contact-line), rgba(255, 255, 255, 0.06) 60%, var(--contact-line));
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.contact:hover {
+  background: linear-gradient(135deg, var(--contact-accent), rgba(255, 255, 255, 0.08) 45%, var(--contact-accent-2));
+}
+
+.contact__body {
+  position: relative;
+  overflow: hidden;
+  padding: 14px;
+  clip-path: var(--contact-shape);
+  background: var(--contact-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* scanlines, and a wash of the palette behind the portrait like neon spill */
+.contact__body::before,
+.contact__body::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.contact__body::before {
+  inset: -50% 30% 50% -40%;
+  background: radial-gradient(closest-side, var(--contact-accent), transparent 72%);
+  opacity: 0.2;
+  transition: opacity 0.4s ease, background 0.6s ease;
+}
+
+.contact:hover .contact__body::before {
+  opacity: 0.32;
+}
+
+.contact__body::after {
+  inset: 0;
+  background: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.022) 0 1px, transparent 1px 3px);
+}
+
+.contact__head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ---- portrait: a cut-corner frame with an arc of neon running round it ---- */
+
+.contact__portrait {
+  --contact-pcut: 10px;
+  --contact-pshape: polygon(0 0, calc(100% - var(--contact-pcut)) 0, 100% var(--contact-pcut), 100% 100%,
+    var(--contact-pcut) 100%, 0 calc(100% - var(--contact-pcut)));
+  position: relative;
+  flex: 0 0 60px;
+  width: 60px;
+  height: 60px;
+  padding: 2px;
+  clip-path: var(--contact-pshape);
+  background: conic-gradient(
+    from var(--contact-spin),
+    rgba(255, 255, 255, 0.1) 0 40%,
+    var(--contact-accent) 58%,
+    var(--contact-accent-2) 72%,
+    rgba(255, 255, 255, 0.1) 86% 100%
+  );
+  animation: contact-ring 6s linear infinite;
+}
+
+@keyframes contact-ring {
+  to { --contact-spin: 360deg; }
+}
+
+.contact__frame {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  clip-path: var(--contact-pshape);
+  background: var(--contact-well);
+}
+
+/* at rest: monochrome, tinted by the palette, behind scanlines; the colour
+   comes back on hover */
+.contact__frame::before,
+.contact__frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+}
+
+.contact__frame::before {
+  z-index: 1;
+  background: linear-gradient(160deg, var(--contact-accent-2), var(--contact-accent));
+  mix-blend-mode: color;
+  opacity: 0.55;
+}
+
+.contact__frame::after {
+  z-index: 2;
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.28) 0 1px, transparent 1px 3px);
+}
+
+.contact__portrait img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.3) translate(-11.5%, 9.5%);
+  filter: grayscale(1) contrast(1.15) brightness(0.95);
+  transition: filter 0.45s ease, transform 0.45s ease;
+}
+
+.contact:hover .contact__portrait img {
+  filter: grayscale(0) contrast(1.06) brightness(1.02);
+  transform: scale(1.38) translate(-11.5%, 9.5%);
+}
+
+.contact:hover .contact__frame::before {
+  opacity: 0;
+}
+
+.contact:hover .contact__frame::after {
+  opacity: 0.4;
+}
+
+/* ---- who ---- */
+
+.contact__who {
+  position: relative;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.contact__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font: 600 9px/1.2 var(--contact-mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--contact-online);
+  text-shadow: 0 0 8px rgba(45, 255, 138, 0.55);
+}
+
+/* the switches' diamond, pulsing */
+.contact__status i {
+  width: 6px;
+  height: 6px;
+  margin-left: 1px;
+  background: var(--contact-online);
+  transform: rotate(45deg);
+  animation: contact-pulse 2.4s ease-out infinite;
+}
+
+@keyframes contact-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(45, 255, 138, 0.6); }
+  70% { box-shadow: 0 0 0 6px rgba(45, 255, 138, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(45, 255, 138, 0); }
+}
+
+/* the title voice, with the preloader's glitch passing now and then */
+.contact__name {
+  position: relative;
+  font-family: Orbitron, sans-serif;
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 0.22em;
+  line-height: 1.15;
+  color: #fff;
+  text-shadow: 0 0 12px color-mix(in srgb, var(--contact-accent) 80%, transparent);
+}
+
+.contact__name::before,
+.contact__name::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.contact__name::before {
+  color: var(--contact-accent);
+  clip-path: inset(0 0 58% 0);
+  animation: contact-glitch 5.5s steps(1) 2s infinite;
+}
+
+.contact__name::after {
+  color: var(--contact-accent-2);
+  clip-path: inset(52% 0 0 0);
+  animation: contact-glitch 5.5s steps(1) 2.07s infinite reverse;
+}
+
+@keyframes contact-glitch {
+  0%, 88%, 100% { opacity: 0; transform: none; }
+  89% { opacity: 0.9; transform: translate(-3px, 0); }
+  91% { opacity: 0.9; transform: translate(3px, 1px); }
+  93% { opacity: 0.9; transform: translate(-1px, -1px); }
+  95% { opacity: 0; transform: none; }
+}
+
+.contact__role {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--contact-dim);
+}
+
+/* ---- the rule: a neon line, with a pulse running along it now and then ---- */
+
+.contact__rule {
+  position: relative;
+  height: 1px;
+  margin: 13px -14px 0;
+  overflow: hidden;
+  background: linear-gradient(90deg, transparent,
+    color-mix(in srgb, var(--contact-accent) 55%, transparent) 20%,
+    color-mix(in srgb, var(--contact-accent-2) 55%, transparent) 80%, transparent);
+}
+
+.contact__rule > b {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 26%;
+  background: linear-gradient(90deg, transparent, #fff, transparent);
+  transform: translateX(-110%);
+  animation: contact-glint 7s ease-in-out 2.5s infinite;
+}
+
+@keyframes contact-glint {
+  0%, 70% { transform: translateX(-110%); }
+  95%, 100% { transform: translateX(400%); }
+}
+
+.contact__note {
+  position: relative;
+  margin: 11px 0 12px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #a9a5bf;
+}
+
+/* ---- links ---- */
+
+.contact__links {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.contact__link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 12px 7px 8px;
+  border: 1px solid var(--contact-line);
+  background: var(--contact-well);
+  color: var(--contact-ink);
+  text-decoration: none;
+  /* the type buttons' cut */
+  clip-path: polygon(0 0, 100% 0, 100% 62%, calc(100% - 12px) 100%, 0 100%);
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.contact__link:hover,
+.contact__link:focus-visible {
+  transform: translateX(3px);
+  outline: none;
+}
+
+.contact__icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 26px;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--contact-line);
+  background: #1a1630;
+  color: var(--contact-ink);
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.contact__icon svg {
+  display: block;
+  width: 13px;
+  height: 13px;
+}
+
+.contact__link-text {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  line-height: 1.2;
+}
+
+.contact__link-text b {
+  font-family: Orbitron, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #fff;
+}
+
+.contact__link-text em {
+  font: 9px/1.3 var(--contact-mono);
+  font-style: normal;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--contact-dim);
+}
+
+.contact__go {
+  flex: none;
+  width: 13px;
+  height: 13px;
+  margin-left: auto;
+  opacity: 0.35;
+  transition: transform 0.2s ease, opacity 0.2s ease, color 0.2s ease;
+}
+
+.contact__link:hover .contact__go,
+.contact__link:focus-visible .contact__go {
+  opacity: 1;
+  transform: translate(2px, -2px);
+}
+
+/* each link lights in its own colour: X in cyan, the studio in the palette */
+.contact__link--x:hover,
+.contact__link--x:focus-visible {
+  border-color: #05d9e8;
+  box-shadow: inset 0 0 18px rgba(5, 217, 232, 0.18);
+}
+
+.contact__link--x:hover .contact__icon,
+.contact__link--x:focus-visible .contact__icon {
+  border-color: #05d9e8;
+  color: #05d9e8;
+  box-shadow: 0 0 10px rgba(5, 217, 232, 0.45);
+}
+
+.contact__link--x:hover .contact__go,
+.contact__link--x:focus-visible .contact__go {
+  color: #05d9e8;
+}
+
+.contact__link--site:hover,
+.contact__link--site:focus-visible {
+  border-color: var(--contact-accent);
+  box-shadow: inset 0 0 18px color-mix(in srgb, var(--contact-accent) 22%, transparent);
+}
+
+.contact__link--site:hover .contact__icon,
+.contact__link--site:focus-visible .contact__icon {
+  border-color: var(--contact-accent);
+  color: var(--contact-accent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--contact-accent) 50%, transparent);
+}
+
+.contact__link--site:hover .contact__go,
+.contact__link--site:focus-visible .contact__go {
+  color: var(--contact-accent);
+}
+
+/* the source code: a hazard-yellow plate, black type, a sheen passing now and then */
+.contact__link--code {
+  overflow: hidden;
+  border-color: var(--contact-yellow);
+  background: var(--contact-yellow);
+  color: var(--contact-black);
+}
+
+.contact__link--code:hover,
+.contact__link--code:focus-visible {
+  background: #fff35a;
+  border-color: #fff35a;
+}
+
+.contact__link--code .contact__icon {
+  border-color: var(--contact-black);
+  background: var(--contact-black);
+  color: var(--contact-yellow);
+}
+
+.contact__link--code .contact__link-text b {
+  color: var(--contact-black);
+}
+
+.contact__link--code .contact__link-text em {
+  color: #4d4600;
+}
+
+.contact__link--code .contact__go {
+  color: var(--contact-black);
+  opacity: 0.75;
+}
+
+.contact__link--code::after,
+.contact__code-pill::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 40%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.75), transparent);
+  transform: translateX(-160%) skewX(-18deg);
+  animation: contact-sheen 6s ease-in-out 1.5s infinite;
+  pointer-events: none;
+}
+
+@keyframes contact-sheen {
+  0%, 70% { transform: translateX(-160%) skewX(-18deg); }
+  100% { transform: translateX(360%) skewX(-18deg); }
+}
+
+/* ---- collapse ---- */
+
+.contact__toggle {
+  position: absolute;
+  top: 8px;
+  right: 16px; /* clear of the cut corner */
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--contact-dim);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease, background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.contact:hover .contact__toggle,
+.contact__toggle:focus-visible {
+  opacity: 1;
+  border-color: var(--contact-line);
+  background: var(--contact-well);
+  outline: none;
+}
+
+.contact__toggle:hover,
+.contact__toggle:focus-visible {
+  color: #fff;
+  border-color: var(--contact-accent);
+}
+
+.contact__toggle-bar {
+  width: 9px;
+  height: 2px;
+  background: currentColor;
+}
+
+/* collapsed: the portrait alone, and the whole tile is the way back */
+.contact-wrap.is-collapsed {
+  width: auto;
+  --contact-cut: 12px;
+}
+
+.contact-wrap.is-collapsed .contact__body {
+  padding: 7px;
+}
+
+.contact-wrap.is-collapsed .contact__who,
+.contact-wrap.is-collapsed .contact__rule,
+.contact-wrap.is-collapsed .contact__note,
+.contact-wrap.is-collapsed .contact__links,
+.contact-wrap.is-collapsed .contact__toggle-bar {
+  display: none;
+}
+
+.contact-wrap.is-collapsed .contact__body::before {
+  inset: 0;
+}
+
+@media (hover: hover) {
+  .contact-wrap.is-collapsed .contact:hover {
+    transform: scale(1.06);
+  }
+}
+
+.contact-wrap.is-collapsed .contact__toggle {
+  inset: 0;
+  width: auto;
+  height: auto;
+  opacity: 1;
+  border-color: transparent;
+  background: transparent;
+}
+
+/* the tags beside the collapsed tile: "work with me" on hover / focus, and the
+   source link the rest of the time, in the same place */
+.contact__hint,
+.contact__code-pill {
+  display: none;
+}
+
+.contact-wrap.is-collapsed .contact__hint,
+.contact-wrap.is-collapsed .contact__code-pill {
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 10px);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px 9px 12px;
+  font: 700 10px/1 Orbitron, sans-serif;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
+  transition: opacity 0.22s ease, transform 0.22s ease, background 0.2s ease;
+}
+
+.contact-wrap.is-collapsed .contact__hint {
+  border: 1px solid var(--contact-accent);
+  background: var(--contact-glass);
+  color: #fff;
+  text-shadow: 0 0 8px var(--contact-accent);
+  opacity: 0;
+  transform: translate(8px, -50%);
+  pointer-events: none;
+}
+
+.contact-wrap.is-collapsed .contact__code-pill {
+  overflow: hidden;
+  background: var(--contact-yellow);
+  color: var(--contact-black);
+  text-decoration: none;
+  transform: translateY(-50%);
+}
+
+.contact__code-pill svg {
+  flex: none;
+  width: 13px;
+  height: 13px;
+}
+
+.contact-wrap.is-collapsed .contact__code-pill:hover,
+.contact-wrap.is-collapsed .contact__code-pill:focus-visible {
+  outline: none;
+  background: #fff35a;
+  transform: translate(-2px, -50%);
+}
+
+/* hover only where there is one: a phone keeps :hover on the tile after a
+   tap, which would leave the label up and the source tag hidden */
+.contact-wrap.is-collapsed .contact:has(.contact__toggle:focus-visible) ~ .contact__hint {
+  opacity: 1;
+  transform: translate(0, -50%);
+}
+
+.contact-wrap.is-collapsed .contact:has(.contact__toggle:focus-visible) ~ .contact__code-pill {
+  opacity: 0;
+  transform: translate(-8px, -50%);
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .contact-wrap.is-collapsed .contact:hover ~ .contact__hint {
+    opacity: 1;
+    transform: translate(0, -50%);
+  }
+  .contact-wrap.is-collapsed .contact:hover ~ .contact__code-pill {
+    opacity: 0;
+    transform: translate(-8px, -50%);
+    pointer-events: none;
+  }
+}
+
+/* touch: no hover to reveal the fold button, so it stays out, sized for a thumb */
+@media (hover: none) {
+  .contact__toggle {
+    opacity: 1;
+    border-color: var(--contact-line);
+    background: var(--contact-well);
+  }
+}
+
+@media (pointer: coarse) {
+  .contact__toggle {
+    top: 6px;
+    right: 14px;
+    width: 30px;
+    height: 30px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact__portrait,
+  .contact__rule > b,
+  .contact__status i,
+  .contact__name::before,
+  .contact__name::after,
+  .contact__link--code::after,
+  .contact__code-pill::after {
+    animation: none;
+  }
+  .contact-wrap {
+    animation: none;
+  }
+}
+
+/* short window: the line about the work goes, the links stay */
+@media (max-height: 760px) {
+  .contact__note {
+    display: none;
+  }
+  .contact__links {
+    margin-top: 12px;
+  }
+}
+
+/* very short window: opened by hand, the card keeps to the essentials so the
+   panel keeps some room above it */
+@media (max-height: 620px) {
+  .contact__body {
+    padding: 11px;
+  }
+  .contact__rule {
+    margin: 10px -11px 0;
+  }
+  .contact__links {
+    margin-top: 10px;
+    gap: 5px;
+  }
+  .contact__link {
+    padding: 5px 12px 5px 6px;
+  }
+  .contact__link-text em {
+    display: none;
+  }
+  .contact__portrait {
+    flex-basis: 48px;
+    width: 48px;
+    height: 48px;
+  }
+  .contact__name {
+    font-size: 15px;
+  }
+}
+
+/* phone: the panel is a bottom sheet (42vh, styles.css) and the type buttons
+   stack on the left above it, so the card sits on the right just above the
+   sheet (it opens as the portrait alone there, ROOM in ContactCard.tsx) and its
+   tags stand on top of the tile instead of beside it */
+@media (max-width: 760px) {
+  .contact-wrap {
+    right: 8px;
+    bottom: calc(42vh + 16px);
+    max-width: calc(100vw - 16px);
+  }
+  .contact-wrap.is-collapsed .contact__hint,
+  .contact-wrap.is-collapsed .contact__code-pill {
+    top: auto;
+    bottom: calc(100% + 8px);
+    right: 0;
+    transform: none;
+  }
+  .contact-wrap.is-collapsed .contact__hint {
+    transform: translateY(6px);
+  }
+  .contact-wrap.is-collapsed .contact__code-pill:hover,
+  .contact-wrap.is-collapsed .contact__code-pill:focus-visible {
+    transform: none;
+  }
+  .contact-wrap.is-collapsed .contact:has(.contact__toggle:focus-visible) ~ .contact__hint {
+    transform: none;
+  }
+  .contact-wrap.is-collapsed .contact:has(.contact__toggle:focus-visible) ~ .contact__code-pill {
+    transform: translateY(-6px);
+  }
+}
+
+@media (max-width: 760px) and (hover: hover) {
+  .contact-wrap.is-collapsed .contact:hover ~ .contact__hint {
+    transform: none;
+  }
+  .contact-wrap.is-collapsed .contact:hover ~ .contact__code-pill {
+    transform: translateY(-6px);
+  }
+}
+
+/* narrower than the card: the sub-labels go before they wrap */
+@media (max-width: 330px) {
+  .contact__link-text em {
+    display: none;
+  }
+}

@@ -1,0 +1,34 @@
+Improved textures: every set is CC0 1.0 Universal (public domain).
+Free for personal and commercial use, no attribution required.
+ambientCG: https://ambientcg.com  ·  Poly Haven: https://polyhaven.com
+
+  concrete-0     ambientCG  Concrete036              https://ambientcg.com/view?id=Concrete036
+  concrete-1     ambientCG  Concrete034              https://ambientcg.com/view?id=Concrete034
+  concrete-2     Poly Haven concrete_wall_008        https://polyhaven.com/a/concrete_wall_008
+  concrete-3     Poly Haven cracked_concrete_wall    https://polyhaven.com/a/cracked_concrete_wall
+  plaster-0      ambientCG  Plaster003               https://ambientcg.com/view?id=Plaster003
+  plaster-1      ambientCG  PaintedPlaster017        https://ambientcg.com/view?id=PaintedPlaster017
+  plaster-2      Poly Haven white_rough_plaster      https://polyhaven.com/a/white_rough_plaster
+  tiles-0        ambientCG  Tiles036                 https://ambientcg.com/view?id=Tiles036
+  tiles-1        ambientCG  Tiles138                 https://ambientcg.com/view?id=Tiles138
+  tiles-2        Poly Haven tiled_floor_001          https://polyhaven.com/a/tiled_floor_001
+  bricks-0       ambientCG  Bricks101                https://ambientcg.com/view?id=Bricks101
+  bricks-1       ambientCG  Bricks097                https://ambientcg.com/view?id=Bricks097
+  metalDark-0    ambientCG  Metal027                 https://ambientcg.com/view?id=Metal027
+  metalDark-1    ambientCG  Metal028                 https://ambientcg.com/view?id=Metal028
+  metalDark-2    Poly Haven metal_plate              https://polyhaven.com/a/metal_plate
+  brushed-0      ambientCG  Metal009                 https://ambientcg.com/view?id=Metal009
+  brushed-1      ambientCG  Metal050C                https://ambientcg.com/view?id=Metal050C
+  rusty-0        ambientCG  Metal041B                https://ambientcg.com/view?id=Metal041B
+  rusty-1        Poly Haven rusty_metal_02           https://polyhaven.com/a/rusty_metal_02
+  painted-0      ambientCG  PaintedMetal012          https://ambientcg.com/view?id=PaintedMetal012
+  painted-1      Poly Haven green_metal_rust         https://polyhaven.com/a/green_metal_rust
+  corrugated-0   ambientCG  CorrugatedSteel005       https://ambientcg.com/view?id=CorrugatedSteel005
+  corrugated-1   Poly Haven corrugated_iron_02       https://polyhaven.com/a/corrugated_iron_02
+  road-0         ambientCG  Road012A                 https://ambientcg.com/view?id=Road012A
+  road-1         ambientCG  Asphalt031               https://ambientcg.com/view?id=Asphalt031
+  road-2         Poly Haven asphalt_02               https://polyhaven.com/a/asphalt_02
+  paving-0       ambientCG  PavingStones136          https://ambientcg.com/view?id=PavingStones136
+  paving-1       Poly Haven large_grey_tiles         https://polyhaven.com/a/large_grey_tiles
+  tactile-0      ambientCG  TactilePaving003         https://ambientcg.com/view?id=TactilePaving003
+  leak           ambientCG  Leaking006               https://ambientcg.com/view?id=Leaking006

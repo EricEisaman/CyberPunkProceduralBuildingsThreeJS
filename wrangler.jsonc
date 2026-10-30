@@ -1,0 +1,16 @@
+// Cloudflare Workers config: the app is served as static assets from dist/.
+//   npm run deploy      (build, then upload; run `npx wrangler login` once first)
+// See "Deploying" in README.md.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "neon-district",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    // a one-page app: any unknown path serves index.html
+    "not_found_handling": "single-page-application"
+  },
+  "observability": {
+    "enabled": true
+  }
+}
