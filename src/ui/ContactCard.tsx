@@ -18,9 +18,9 @@ import { useLayoutEffect, useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import "./contact.css";
 
-const SITE_URL = "https://chirostudio.xyz";
-const X_URL = "https://x.com/chirovisuals";
-const REPO_URL = "https://github.com/achrefelouafi/CyberPunkProceduralBuildingsThreeJS";
+const SITE_URL = "https://linkedin.com/in/eisaman";
+const X_URL = "https://x.com/SirFizX207";
+const REPO_URL = "https://github.com/EricEisaman/CyberPunkProceduralBuildingsThreeJS";
 
 const STORE_KEY = "chiro.contact.collapsed";
 
@@ -141,12 +141,12 @@ export function ContactCard({ accent, accent2 }: { accent: string; accent2: stri
           <div className="contact__head">
             <div className="contact__portrait">
               <span className="contact__frame">
-                <img src="contact/p.jpg" alt="Portrait of Chiro" decoding="async" draggable={false} />
+                <img src="contact/p.jpg" alt="Portrait of SirFizX" decoding="async" draggable={false} />
               </span>
             </div>
             <div className="contact__who">
               <span className="contact__status"><i />Available for work</span>
-              <span className="contact__name" data-text="CHIRO">CHIRO</span>
+              <span className="contact__name" data-text="SirFizX">SirFizX</span>
               <span className="contact__role">Creative dev &mdash; 3D, motion, games</span>
             </div>
           </div>
@@ -159,8 +159,8 @@ export function ContactCard({ accent, accent2 }: { accent: string; accent2: stri
 
           <div className="contact__links">
             <Link href={REPO_URL} kind="code" icon={<IconGithub />} label="Get the source code" sub="Open source · MIT · GitHub" />
-            <Link href={X_URL} kind="x" icon={<IconX />} label="@chirovisuals" sub="Work in motion, daily" />
-            <Link href={SITE_URL} kind="site" icon={<IconSite />} label="chirostudio.xyz" sub="Portfolio & contact" />
+            <Link href={X_URL} kind="x" icon={<IconX />} label="@SirFizX207" sub="Work in motion, daily" />
+            <Link href={SITE_URL} kind="site" icon={<IconSite />} label="Sigma Scholar Alliance" sub="Keep Siggin!" />
           </div>
         </div>
       </div>
